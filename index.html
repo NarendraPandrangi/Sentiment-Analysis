@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Twitter Sentiment Analysis</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; background: #f4f4f9; }
+    textarea { width: 400px; height: 100px; padding: 10px; font-size: 16px; }
+    button { padding: 10px 20px; margin-top: 15px; font-size: 16px; cursor: pointer; }
+    .result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Twitter Sentiment Analysis</h1>
+  <textarea id="tweetInput" placeholder="Enter your tweet here..."></textarea><br>
+  <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+  <div class="result" id="result"></div>
+
+  <script>
+    async function analyzeSentiment() {
+      const text = document.getElementById("tweetInput").value;
+      if (!text) { alert("Please enter a tweet!"); return; }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: text })
+        });
+
+        if (!response.ok) throw new Error("Server error: " + response.status);
+
+        const data = await response.json();
+        document.getElementById("result").innerText = `Sentiment: ${data.sentiment}`;
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("result").innerText = "Error analyzing sentiment.";
+      }
+    }
+  </script>
+</body>
+</html>
